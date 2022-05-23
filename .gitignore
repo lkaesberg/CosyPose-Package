@@ -20,3 +20,4 @@ dist/
 *.so
 build/
 *.temp
+.idea
