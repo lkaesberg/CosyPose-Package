@@ -2,12 +2,12 @@ import torch
 
 from collections import defaultdict
 from torch.utils.data import TensorDataset, DataLoader
-from cosypose.lib3d.cosypose_ops import TCO_init_from_boxes, TCO_init_from_boxes_zup_autodepth
+from cosypose.cosypose.lib3d.cosypose_ops import TCO_init_from_boxes, TCO_init_from_boxes_zup_autodepth
 
-import cosypose.utils.tensor_collection as tc
+import cosypose.cosypose.utils.tensor_collection as tc
 
-from cosypose.utils.logging import get_logger
-from cosypose.utils.timer import Timer
+from cosypose.cosypose.utils.logging import get_logger
+from cosypose.cosypose.utils.timer import Timer
 logger = get_logger(__name__)
 
 

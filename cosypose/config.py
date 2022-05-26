@@ -6,12 +6,13 @@ from pathlib import Path
 import getpass
 import socket
 import torch.multiprocessing
+
 torch.multiprocessing.set_sharing_strategy('file_system')
 
 hostname = socket.gethostname()
 username = getpass.getuser()
 
-PROJECT_ROOT = Path(cosypose.__file__).parent.parent
+PROJECT_ROOT = Path(".").parent.parent / 'cosypose'
 PROJECT_DIR = PROJECT_ROOT
 DATA_DIR = PROJECT_DIR / 'data'
 LOCAL_DATA_DIR = PROJECT_DIR / 'local_data'
@@ -30,6 +31,7 @@ DEBUG_DATA_DIR = LOCAL_DATA_DIR / 'debug_data'
 DEPS_DIR = PROJECT_DIR / 'deps'
 CACHE_DIR = LOCAL_DATA_DIR / 'joblib_cache'
 
+LOCAL_DATA_DIR.mkdir(exist_ok=True)
 assert LOCAL_DATA_DIR.exists()
 CACHE_DIR.mkdir(exist_ok=True)
 TEST_DATA_DIR.mkdir(exist_ok=True)
@@ -40,7 +42,6 @@ DEBUG_DATA_DIR.mkdir(exist_ok=True)
 
 ASSET_DIR = DATA_DIR / 'assets'
 MEMORY = Memory(CACHE_DIR, verbose=2)
-
 
 CONDA_PREFIX = os.environ['CONDA_PREFIX']
 if 'CONDA_PREFIX_1' in os.environ:
