@@ -7,9 +7,9 @@ import pandas as pd
 import torch
 from PIL import Image
 
-from cosypose.cosypose.config import MEMORY, BOP_TOOLKIT_DIR
-from cosypose.cosypose.lib3d import Transform
-from cosypose.cosypose.utils.logging import get_logger
+from cosypose.config import MEMORY, BOP_TOOLKIT_DIR
+from cosypose.lib3d import Transform
+from cosypose.utils.logging import get_logger
 
 import sys
 sys.path.append(str(BOP_TOOLKIT_DIR))

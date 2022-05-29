@@ -3,13 +3,13 @@ from pathlib import Path
 import numpy as np
 import pybullet as pb
 
-from cosypose.cosypose.datasets.datasets_cfg import make_urdf_dataset
-from cosypose.cosypose.datasets.urdf_dataset import BOPUrdfDataset
-from cosypose.cosypose.lib3d import Transform
+from cosypose.datasets.datasets_cfg import make_urdf_dataset
+from cosypose.datasets.urdf_dataset import BOPUrdfDataset
+from cosypose.lib3d import Transform
 
-from cosypose.cosypose.simulator.base_scene import BaseScene
-from cosypose.cosypose.simulator.caching import BodyCache
-from cosypose.cosypose.simulator.camera import Camera
+from cosypose.simulator.base_scene import BaseScene
+from cosypose.simulator.caching import BodyCache
+from cosypose.simulator.camera import Camera
 from src.urdf_cfg import get_urdf_path
 
 

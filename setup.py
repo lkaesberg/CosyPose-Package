@@ -13,6 +13,18 @@ setup(
     version='1.0.0',
     description='CosyPose',
     packages=find_packages(),
+    data_files=[("cosypose",
+                 ["rclone.conf"]),
+                ("cosypose/libmesh/meshlab_templates",
+                 ["cosypose/libmesh/meshlab_templates/template_add_uv.mlx",
+                  "cosypose/libmesh/meshlab_templates/template_downsample.mlx",
+                  "cosypose/libmesh/meshlab_templates/template_downsample_textures.mlx",
+                  "cosypose/libmesh/meshlab_templates/template_ply_texture_to_obj.mlx",
+                  "cosypose/libmesh/meshlab_templates/template_remesh_marchingcubes.mlx",
+                  "cosypose/libmesh/meshlab_templates/template_remesh_poisson.mlx",
+                  "cosypose/libmesh/meshlab_templates/template_sample_points.mlx",
+                  "cosypose/libmesh/meshlab_templates/template_transfer_texture.mlx",
+                  "cosypose/libmesh/meshlab_templates/template_vertexcolor_to_texture.mlx", ])],
     ext_modules=[
         CppExtension(
             name='cosypose_cext',

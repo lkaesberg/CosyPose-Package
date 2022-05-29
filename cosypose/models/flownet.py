@@ -2,7 +2,7 @@
 import torch
 import torch.nn as nn
 from torch.nn.init import kaiming_normal_, constant_
-from cosypose.cosypose.config import LOCAL_DATA_DIR
+from cosypose.config import LOCAL_DATA_DIR
 
 
 class FlowNetS(nn.Module):

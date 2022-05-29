@@ -1,13 +1,13 @@
 from pathlib import Path
 import argparse
 import shutil
-from cosypose.cosypose.config import LOCAL_DATA_DIR
+from cosypose.config import LOCAL_DATA_DIR
 from tqdm import tqdm
 
-from cosypose.cosypose.datasets.bop_object_datasets import BOPObjectDataset
-from cosypose.cosypose.datasets.datasets_cfg import make_object_dataset
-from cosypose.cosypose.libmesh import ply_to_obj, obj_to_urdf
-from cosypose.cosypose.libmesh import downsample_obj
+from cosypose.datasets.bop_object_datasets import BOPObjectDataset
+from cosypose.datasets.datasets_cfg import make_object_dataset
+from cosypose.libmesh import ply_to_obj, obj_to_urdf
+from cosypose.libmesh import downsample_obj
 
 
 def convert_obj_dataset_to_urdfs(obj_ds_name, texture_size=(1024, 1024), n_faces=None):
