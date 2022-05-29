@@ -15,6 +15,8 @@ def _get_template(template_name):
 def run_meshlab_script(in_path, out_path, script, cd_dir=None, has_textures=True):
     in_path = Path(in_path)
     out_path = Path(out_path)
+    print(in_path.as_posix())
+    print(out_path.as_posix())
     n = np.random.randint(1e6)
     script_path = Path(f'/dev/shm/{n}.mlx')
     script_path.write_text(script)
@@ -22,11 +24,11 @@ def run_meshlab_script(in_path, out_path, script, cd_dir=None, has_textures=True
     if cd_dir is None:
         cd_dir = '.'
     command = [f'cd {cd_dir} &&', 'LC_ALL=C',
-               'meshlabserver', '-i', in_path.as_posix(), '-o', out_path.as_posix(),
-               '-s', script_path.as_posix(), '-om', 'vn']
+               'meshlabserver', '-i', in_path.as_posix(), '-o', out_path.as_posix(), '-m', 'vn']
     if has_textures:
         command += ['wt', 'vt']
-    print(command)
+    command += ['-s', script_path.as_posix()]
+    print(' '.join(command))
     os.system(' '.join(command))
     script_path.unlink()
     return
@@ -35,6 +37,7 @@ def run_meshlab_script(in_path, out_path, script, cd_dir=None, has_textures=True
 def add_texture_to_mtl(obj_path):
     # Sometimes meshlab forgets to puts the texture in the output mtl.
     obj_path = Path(obj_path)
+    obj_path.with_suffix('.obj.mtl').touch(exist_ok=True)
     texture_name = obj_path.with_suffix('').name + '_texture.png'
     mtl_path = obj_path.with_suffix('.obj.mtl')
     mtl = mtl_path.read_text()
@@ -66,7 +69,7 @@ def ply_to_obj(ply_path, obj_path, texture_size=(1024, 1024)):
         template = _get_template('template_ply_texture_to_obj.mlx')
         script = template
         ply_texture_name = ply_texture.split('.')[0]
-        out_texture_path = obj_path.parent / (ply_texture_name+'_texture.png')
+        out_texture_path = obj_path.parent / (ply_texture_name + '_texture.png')
         shutil.copy(ply_path.parent / ply_texture, out_texture_path)
         Image.open(out_texture_path).resize(texture_size, resample=PIL.Image.BILINEAR).save(out_texture_path)
         run_meshlab_script(ply_path, obj_path, template)

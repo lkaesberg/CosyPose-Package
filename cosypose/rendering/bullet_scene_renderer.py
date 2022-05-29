@@ -1,12 +1,16 @@
+from pathlib import Path
+
 import numpy as np
 import pybullet as pb
 
 from cosypose.cosypose.datasets.datasets_cfg import make_urdf_dataset
+from cosypose.cosypose.datasets.urdf_dataset import BOPUrdfDataset
 from cosypose.cosypose.lib3d import Transform
 
 from cosypose.cosypose.simulator.base_scene import BaseScene
 from cosypose.cosypose.simulator.caching import BodyCache
 from cosypose.cosypose.simulator.camera import Camera
+from src.urdf_cfg import get_urdf_path
 
 
 class BulletSceneRenderer(BaseScene):
@@ -16,8 +20,9 @@ class BulletSceneRenderer(BaseScene):
                  background_color=(0, 0, 0),
                  gpu_renderer=True,
                  gui=False):
-
-        self.urdf_ds = make_urdf_dataset(urdf_ds)
+        urdf_path = get_urdf_path()
+        assert urdf_path is not None
+        self.urdf_ds = BOPUrdfDataset(Path(urdf_path))
         self.connect(gpu_renderer=gpu_renderer, gui=gui)
         self.body_cache = BodyCache(self.urdf_ds, self.client_id)
         if preload_cache:
