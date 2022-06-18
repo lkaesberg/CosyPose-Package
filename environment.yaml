@@ -11,6 +11,7 @@ dependencies:
   - rclone=1.52.3
   - gxx_linux-64=7.3.0
   - git-lfs=2.11.0
+  - Cython==0.29.21
   - ffmpeg=4.2
   - bzip2=1.0.8
   - git=2.28.0
@@ -44,7 +45,6 @@ dependencies:
       - wget==3.2
       - pypng==0.0.20
       - PyOpenGL==3.1.0
-      - Cython==0.29.21
       - glumpy==1.1.0
       - ipdb==0.12.3
       - colorama==0.4.3

@@ -3,6 +3,8 @@ import numpy as np
 import time
 import torch
 import simplejson as json
+from cosypose.datasets.bop import BOPDataset
+from cosypose.datasets.bop_object_datasets import BOPObjectDataset
 from tqdm import tqdm
 import functools
 from pathlib import Path
@@ -33,7 +35,6 @@ from cosypose.lib3d.rigid_mesh_database import MeshDataBase
 
 from .pose_forward_loss import h_pose
 from .pose_models_cfg import create_model_pose, check_update_config
-
 
 from cosypose.utils.logging import get_logger
 from cosypose.utils.distributed import get_world_size, get_rank, sync_model, init_distributed_mode, reduce_dict
@@ -77,10 +78,10 @@ def make_eval_bundle(args, model_training):
     eval_bundle = dict()
     model_training.cfg = args
 
-    def load_model(run_id):
-        if run_id is None:
+    def load_model(path):
+        if path is None:
             return None
-        run_dir = EXP_DIR / run_id
+        run_dir = Path(path)
         cfg = yaml.load((run_dir / 'config.yaml').read_text(), Loader=yaml.FullLoader)
         cfg = check_update_config(cfg)
         model = create_model_pose(cfg, renderer=model_training.renderer,
@@ -196,13 +197,13 @@ def train_pose(args):
 
     args.train_refiner = args.TCO_input_generator == 'gt+noise'
     args.train_coarse = not args.train_refiner
-    args.save_dir = EXP_DIR / args.run_id
+    args.save_dir = args.run_id
     args = check_update_config(args)
 
-    logger.info(f"{'-'*80}")
+    logger.info(f"{'-' * 80}")
     for k, v in args.__dict__.items():
         logger.info(f"{k}: {v}")
-    logger.info(f"{'-'*80}")
+    logger.info(f"{'-' * 80}")
 
     # Initialize distributed
     device = torch.cuda.current_device()
@@ -215,9 +216,9 @@ def train_pose(args):
     # Make train/val datasets
     def make_datasets(dataset_names):
         datasets = []
-        for (ds_name, n_repeat) in dataset_names:
-            assert 'test' not in ds_name
-            ds = make_scene_dataset(ds_name)
+        for (ds_name, split, n_repeat) in dataset_names:
+            assert 'test' not in ds_name.as_posix()
+            ds = BOPDataset(ds_dir=ds_name, split=split)
             logger.info(f'Loaded {ds_name} with {len(ds)} images.')
             for _ in range(n_repeat):
                 datasets.append(ds)
@@ -233,8 +234,8 @@ def train_pose(args):
         min_area=args.min_area,
         gray_augmentation=args.gray_augmentation,
     )
-    ds_train = PoseDataset(scene_ds_train, **ds_kwargs)
-    ds_val = PoseDataset(scene_ds_val, **ds_kwargs)
+    ds_train = PoseDataset(scene_ds_train, **ds_kwargs, voc_root=args.voc_folder)
+    ds_val = PoseDataset(scene_ds_val, **ds_kwargs, voc_root=args.voc_folder)
 
     train_sampler = PartialSampler(ds_train, epoch_size=args.epoch_size)
     ds_iter_train = DataLoader(ds_train, sampler=train_sampler, batch_size=args.batch_size,
@@ -242,7 +243,7 @@ def train_pose(args):
                                drop_last=False, pin_memory=True)
     ds_iter_train = MultiEpochDataLoader(ds_iter_train)
 
-    val_sampler = PartialSampler(ds_val, epoch_size=int(0.1 * args.epoch_size))
+    val_sampler = PartialSampler(ds_val, epoch_size=max(int(0.1 * args.epoch_size), 1))
     ds_iter_val = DataLoader(ds_val, sampler=val_sampler, batch_size=args.batch_size,
                              num_workers=args.n_dataloader_workers, collate_fn=ds_val.collate_fn,
                              drop_last=False, pin_memory=True)
@@ -250,7 +251,7 @@ def train_pose(args):
 
     # Make model
     renderer = BulletBatchRenderer(object_set=args.urdf_ds_name, n_workers=args.n_rendering_workers)
-    object_ds = make_object_dataset(args.object_ds_name)
+    object_ds = BOPObjectDataset(args.object_ds_name)
     mesh_db = MeshDataBase.from_object_ds(object_ds).batched(n_sym=args.n_symmetries_batch).cuda().float()
 
     model = create_model_pose(cfg=args, renderer=renderer, mesh_db=mesh_db).cuda()

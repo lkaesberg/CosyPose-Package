@@ -10,7 +10,7 @@ from cosypose.lib3d import Transform
 from cosypose.simulator.base_scene import BaseScene
 from cosypose.simulator.caching import BodyCache
 from cosypose.simulator.camera import Camera
-from src.urdf_cfg import get_urdf_path
+from easymultipose.urdf_cfg import get_urdf_path
 
 
 class BulletSceneRenderer(BaseScene):

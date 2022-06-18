@@ -41,11 +41,11 @@ class MultiEpochDataLoader:
             self.dataloader_iter._sampler_iter = next_index_sampler
             self.id_in_sampler = 0
 
-        idx, batch = self.dataloader_iter._get_data()
-        self.dataloader_iter._tasks_outstanding -= 1
-        self.dataloader_iter._process_data(batch)
+        # idx, batch = self.dataloader_iter._get_data()
+        # self.dataloader_iter._tasks_outstanding -= 1
+        # self.dataloader_iter._process_data(batch)
 
-        # batch = next(self.dataloader_iter)
+        batch = next(self.dataloader_iter)
         self.batch_id += 1
         self.id_in_sampler += 1
         return batch

@@ -19,7 +19,8 @@ class DetectionDataset(torch.utils.data.Dataset):
                  resize=(640, 480),
                  gray_augmentation=False,
                  rgb_augmentation=False,
-                 background_augmentation=False):
+                 background_augmentation=False,
+                 voc_root=LOCAL_DATA_DIR / 'VOCdevkit/VOC2012'):
 
         self.scene_ds = VisibilityWrapper(scene_ds)
 
@@ -27,7 +28,7 @@ class DetectionDataset(torch.utils.data.Dataset):
 
         self.background_augmentation = background_augmentation
         self.background_augmentations = VOCBackgroundAugmentation(
-            voc_root=LOCAL_DATA_DIR / 'VOCdevkit/VOC2012', p=0.3)
+            voc_root=voc_root, p=0.3)
 
         self.rgb_augmentation = rgb_augmentation
         self.rgb_augmentations = [

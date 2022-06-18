@@ -11,6 +11,7 @@ from collections import defaultdict
 import torch.distributed as dist
 
 from cosypose.config import EXP_DIR
+from cosypose.datasets.bop import BOPDataset
 
 from torch.utils.data import DataLoader, ConcatDataset
 from cosypose.utils.multiepoch_dataloader import MultiEpochDataLoader
@@ -24,7 +25,6 @@ from torchvision.models.detection.mask_rcnn import model_urls
 
 from .maskrcnn_forward_loss import h_maskrcnn
 from .detector_models_cfg import create_model_detector, check_update_config
-
 
 from cosypose.utils.logging import get_logger
 from cosypose.utils.distributed import get_world_size, get_rank, sync_model, init_distributed_mode, reduce_dict
@@ -115,12 +115,12 @@ def train_detector(args):
         vars(args).update({k: v for k, v in vars(resume_args).items() if k not in keep_fields})
 
     args = check_update_config(args)
-    args.save_dir = EXP_DIR / args.run_id
+    args.save_dir = args.run_id
 
-    logger.info(f"{'-'*80}")
+    logger.info(f"{'-' * 80}")
     for k, v in args.__dict__.items():
         logger.info(f"{k}: {v}")
-    logger.info(f"{'-'*80}")
+    logger.info(f"{'-' * 80}")
 
     # Initialize distributed
     device = torch.cuda.current_device()
@@ -134,9 +134,9 @@ def train_detector(args):
     def make_datasets(dataset_names):
         datasets = []
         all_labels = set()
-        for (ds_name, n_repeat) in dataset_names:
-            assert 'test' not in ds_name
-            ds = make_scene_dataset(ds_name)
+        for (ds_name, split, n_repeat) in dataset_names:
+            assert 'test' not in ds_name.as_posix()
+            ds = BOPDataset(ds_dir=ds_name, split=split)
             logger.info(f'Loaded {ds_name} with {len(ds)} images.')
             all_labels = all_labels.union(set(ds.all_labels))
             for _ in range(n_repeat):
@@ -159,8 +159,8 @@ def train_detector(args):
         gray_augmentation=args.gray_augmentation,
         label_to_category_id=label_to_category_id,
     )
-    ds_train = DetectionDataset(scene_ds_train, **ds_kwargs)
-    ds_val = DetectionDataset(scene_ds_val, **ds_kwargs)
+    ds_train = DetectionDataset(scene_ds_train, **ds_kwargs, voc_root=args.voc_folder)
+    ds_val = DetectionDataset(scene_ds_val, **ds_kwargs, voc_root=args.voc_folder)
 
     train_sampler = PartialSampler(ds_train, epoch_size=args.epoch_size)
     ds_iter_train = DataLoader(ds_train, sampler=train_sampler, batch_size=args.batch_size,
@@ -288,7 +288,7 @@ def train_detector(args):
         test_dict = None
         if epoch % args.test_epoch_interval == 0:
             model.eval()
-            test_dict = run_eval(args, model, epoch)
+            # test_dict = run_eval(args, model, epoch)
 
         log_dict = dict()
         log_dict.update({
