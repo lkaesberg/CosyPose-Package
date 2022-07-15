@@ -12,7 +12,7 @@ torch.multiprocessing.set_sharing_strategy('file_system')
 hostname = socket.gethostname()
 username = getpass.getuser()
 
-PROJECT_ROOT = Path(".").parent.parent / 'cosypose'
+PROJECT_ROOT = Path(__file__).parent.parent.parent / 'cosypose'
 PROJECT_DIR = PROJECT_ROOT
 DATA_DIR = PROJECT_DIR / 'data'
 LOCAL_DATA_DIR = PROJECT_DIR / 'local_data'
@@ -50,7 +50,6 @@ if 'CONDA_PREFIX_1' in os.environ:
 else:
     CONDA_BASE_DIR = os.environ['CONDA_PREFIX']
     CONDA_ENV = 'base'
-
 cfg = yaml.load((PROJECT_DIR / 'config_yann.yaml').read_text(), Loader=yaml.FullLoader)
 
 SLURM_GPU_QUEUE = cfg['slurm_gpu_queue']
