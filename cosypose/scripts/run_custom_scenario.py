@@ -11,9 +11,6 @@ from cosypose.datasets.bop_object_datasets import BOPObjectDataset
 from cosypose.lib3d.rigid_mesh_database import MeshDataBase
 from cosypose.integrated.multiview_predictor import MultiviewScenePredictor
 import cosypose.utils.tensor_collection as tc
-from cosypose.rendering.bullet_scene_renderer import BulletSceneRenderer
-from cosypose.visualization.multiview import make_cosypose_plots
-from cosypose.visualization.multiview import make_scene_renderings, nms3d
 from cosypose.utils.logging import get_logger
 from cosypose.config import BOP_TOOLKIT_DIR, LOCAL_DATA_DIR
 
