@@ -26,10 +26,11 @@ class Plotter:
         assert rgb_input.dtype == np.uint8 and rgb_rendered.dtype == np.uint8
         mask = ~(rgb_rendered.sum(axis=-1) == 0)
 
-        overlay = np.zeros_like(rgb_input)
-        overlay[~mask] = rgb_input[~mask] * 0.6 + 255 * 0.4
-        overlay[mask] = rgb_rendered[mask] * 0.8 + 255 * 0.2
-        # overlay[mask] = rgb_rendered[mask] * 0.3 + rgb_input[mask] * 0.7
+        overlay = rgb_input
+        overlay[:, :, 2][mask] = overlay[:, :, 2][mask] * 0.80  # + rgb_rendered[:,:,2][mask]*0.2
+        overlay[:, :, 1][mask] = overlay[:, :, 1][mask] * 0.80 + rgb_rendered[:, :, 1][mask] * 0.2
+        overlay[:, :, 0][mask] = overlay[:, :, 0][mask] * 0.80  # + rgb_rendered[:,:,0][mask]*0.2
+
         f = self.plot_image(overlay, name='image')
         return f
 
