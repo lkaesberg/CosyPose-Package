@@ -21,9 +21,9 @@ dependencies:
   - pillow=6.0.0
   - ipython
   - pip:
+      - ./cosypose
       - ./cosypose/deps/bullet3
       - ./cosypose/deps/job-runner
-      - ./cosypose
       - imageio==2.6.1
       - simplejson==3.17.0
       - opencv-python==4.1.2.30
