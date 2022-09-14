@@ -14,7 +14,7 @@ setup(
     description='CosyPose',
     packages=find_packages(),
     data_files=[("cosypose",
-                 ["rclone.conf"]),
+                 ["rclone.conf", "config_yann.yaml"]),
                 ("cosypose/libmesh/meshlab_templates",
                  ["cosypose/libmesh/meshlab_templates/template_add_uv.mlx",
                   "cosypose/libmesh/meshlab_templates/template_downsample.mlx",
